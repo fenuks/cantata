@@ -159,7 +159,7 @@ static struct SOLID_GLOBAL_STATIC_STRUCT_NAME(NAME)                            \
     {                                                                          \
         _solid_static_##NAME##_destroyed = true;                               \
         TYPE *x = _solid_static_##NAME.loadRelaxed();                                 \
-        _solid_static_##NAME.store(0);                                         \
+        _solid_static_##NAME.storeRelaxed(0);                                         \
         delete x;                                                              \
     }                                                                          \
 } NAME;
