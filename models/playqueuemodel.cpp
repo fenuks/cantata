@@ -324,7 +324,7 @@ void PlayQueueModel::encode(QMimeData &mimeData, const QString &mime, const QStr
     QTextStream stream(&encodedData, QIODevice::WriteOnly);
 
     for (const QString &v: values) {
-        stream << v << endl;
+        stream << v << Qt::endl;
     }
 
     mimeData.setData(mime, encodedData);
