@@ -1268,7 +1268,7 @@ void PlayQueueModel::crop(const QList<int> &rowsToKeep)
 
     QSet<qint32> removeIds=allIds-keepIds;
     if (!removeIds.isEmpty()) {
-        emit removeSongs(removeIds.toList());
+        emit removeSongs(removeIds.values());
     }
 }
 
@@ -1283,7 +1283,7 @@ void PlayQueueModel::setRating(const QList<int> &rows, quint8 rating) const
             }
         }
     }
-    emit setRating(files.toList(), rating);
+    emit setRating(files.values(), rating);
 }
 
 void PlayQueueModel::enableUndo(bool e)
