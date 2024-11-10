@@ -36,12 +36,10 @@
 
 #include <taglib/tstring.h>
 #include <taglib/id3v1genres.h>
-#include <QTextCodec>
 static QString id3Genre(int id)
 {
-    static QTextCodec *codec = QTextCodec::codecForName("UTF-8");
     // Clementine: In theory, genre 0 is "blues"; in practice it's invalid.
-    return 0==id ? QString() : codec->toUnicode(TagLib::ID3v1::genre(id).toCString(true)).trimmed();
+    return 0==id ? QString() : QString::fromUtf8(TagLib::ID3v1::genre(id).toCString(true)).trimmed();
 }
 
 #else // TAGLIB_FOUND
@@ -222,7 +220,7 @@ void JamendoXmlParser::parseArtist(QList<Song> *songList, QXmlStreamReader &xml)
         xml.readNext();
 
         if (QXmlStreamReader::StartElement==xml.tokenType()) {
-            QStringRef name = xml.name();
+            QStringView name = xml.name();
 
             if (QLatin1String("name")==name) {
                 song.artist=xml.readElementText().trimmed();
@@ -248,7 +246,7 @@ void JamendoXmlParser::parseAlbum(Song &song, QList<Song> *songList, QXmlStreamR
         xml.readNext();
 
         if (QXmlStreamReader::StartElement==xml.tokenType()) {
-            QStringRef name = xml.name();
+            QStringView name = xml.name();
 
             if (QLatin1String("name")==name) {
                 song.album=xml.readElementText().trimmed();
@@ -284,7 +282,7 @@ void JamendoXmlParser::parseSong(Song &song, const QString &albumGenre, QXmlStre
         xml.readNext();
 
         if (QXmlStreamReader::StartElement==xml.tokenType()) {
-            QStringRef name = xml.name();
+            QStringView name = xml.name();
 
             if (QLatin1String("name")==name) {
                 song.title=xml.readElementText().trimmed();
@@ -343,7 +341,7 @@ QVariant JamendoService::data(const QModelIndex &index, int role) const
                     song.setExtraField(Song::OnlineImageUrl, QString("http://api.jamendo.com/get2/image/album/redirect/?id=%1&imagesize=300").arg(id));
                     item->setSong(song);
                 }
-                v.setValue<Song>(item->getSong());
+                v.setValue(item->getSong());
                 break;
             case T_Artist:
                 break;

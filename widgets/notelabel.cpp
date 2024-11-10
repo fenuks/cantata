@@ -47,7 +47,7 @@ static QLabel * init(QWidget *p, bool url)
     }
 
     QVBoxLayout *l=new QVBoxLayout(p);
-    l->setMargin(0);
+    l->setContentsMargins(0, 0, 0, 0);
     l->setSpacing(0);
     QLabel *label;
     if (url) {
@@ -76,7 +76,7 @@ NoteLabel::NoteLabel(QWidget *parent)
 
 void NoteLabel::setProperty(const char *name, const QVariant &value)
 {
-    if (name && !strcmp(name, "text") && QVariant::String==value.type()) {
+    if (name && !strcmp(name, "text") && QMetaType::QString==value.typeId()) {
         setText(value.toString());
     }
 }
@@ -90,7 +90,7 @@ UrlNoteLabel::UrlNoteLabel(QWidget *parent)
 
 void UrlNoteLabel::setProperty(const char *name, const QVariant &value)
 {
-    if (name && !strcmp(name, "text") && QVariant::String==value.type()) {
+    if (name && !strcmp(name, "text") && QMetaType::QString==value.typeId()) {
         setText(value.toString());
     }
 }

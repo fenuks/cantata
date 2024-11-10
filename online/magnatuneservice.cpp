@@ -62,7 +62,7 @@ Song MagnatuneXmlParser::parseSong(QXmlStreamReader &xml)
         xml.readNext();
 
         if (QXmlStreamReader::StartElement==xml.tokenType()) {
-            QStringRef name = xml.name();
+            QStringView name = xml.name();
             QString value = xml.readElementText(QXmlStreamReader::SkipChildElements);
 
             if (QLatin1String("artist")==name) {
@@ -186,7 +186,7 @@ QVariant MagnatuneService::data(const QModelIndex &index, int role) const
                     song.setExtraField(Song::OnlineImageUrl, url);
                     item->setSong(song);
                 }
-                v.setValue<Song>(item->getSong());
+                v.setValue(item->getSong());
                 break;
             case T_Artist:
                 break;

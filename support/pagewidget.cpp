@@ -65,7 +65,7 @@ public:
         , underMouse(false)
     {
         if (!standard) {
-            int height=QApplication::fontMetrics().height();
+            int height=QFontMetricsF(QApplication::font()).height();
             iconSize=height>22 ? Icon::stdSize(height*2.5) : 32;
         }
     }
@@ -284,7 +284,7 @@ PageWidgetItem::PageWidgetItem(QWidget *p, const QString &header, const QIcon &i
         static int iconSize=-1;
 
         if (-1==iconSize) {
-            iconSize=QApplication::fontMetrics().height();
+            iconSize=QFontMetricsF(QApplication::font()).height();
             if (iconSize>20) {
                 iconSize=Icon::stdSize(iconSize*1.25);
             } else {
@@ -299,7 +299,7 @@ PageWidgetItem::PageWidgetItem(QWidget *p, const QString &header, const QIcon &i
         layout->addItem(new QSpacerItem(8, 8, QSizePolicy::Fixed, QSizePolicy::Fixed));
     }
     layout->addWidget(cfg);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     cfg->setParent(this);
     adjustSize();
 }
@@ -315,7 +315,7 @@ PageWidget::PageWidget(QWidget *p, bool listView, bool headers)
     connect(stack, SIGNAL(currentChanged(int)), this, SIGNAL(currentPageChanged()));
     layout->addWidget(list);
     layout->addWidget(stack);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     list->setViewMode(QListView::ListMode);
     list->setVerticalScrollMode(QListView::ScrollPerPixel);
     list->setMovement(QListView::Static);

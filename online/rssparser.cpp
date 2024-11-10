@@ -25,9 +25,10 @@
 #include <QXmlStreamReader>
 #include <QStringList>
 #include <QSet>
+#include <QRegularExpression>
 
-static const char * constITunesNameSpace = "http://www.itunes.com/dtds/podcast-1.0.dtd";
-static const char * constMediaNameSpace = "http://search.yahoo.com/mrss/";
+static const QString constITunesNameSpace = QStringLiteral("http://www.itunes.com/dtds/podcast-1.0.dtd");
+static const QString constMediaNameSpace = QStringLiteral("http://search.yahoo.com/mrss/");
 
 using namespace RssParser;
 
@@ -69,19 +70,20 @@ static QDateTime parseRfc822DateTime(const QString &text)
     // This sucks but we need it because some podcasts don't quite follow the
     // spec properly - they might have 1-digit hour numbers for example.
 
-    QRegExp re("([a-zA-Z]{3}),? (\\d{1,2}) ([a-zA-Z]{3}) (\\d{4}) (\\d{1,2}):(\\d{1,2}):(\\d{1,2})");
-    if (-1==re.indexIn(text)) {
+    QRegularExpression re("([a-zA-Z]{3}),? (\\d{1,2}) ([a-zA-Z]{3}) (\\d{4}) (\\d{1,2}):(\\d{1,2}):(\\d{1,2})");
+    QRegularExpressionMatch reMatch = re.match(text);
+    if (!reMatch.hasMatch()) {
         return QDateTime();
     }
 
-    QDateTime dt(QDate::fromString(QString("%1 %2 %3 %4").arg(re.cap(1), re.cap(3), re.cap(2), re.cap(4)), Qt::TextDate),
-                 QTime(re.cap(5).toInt(), re.cap(6).toInt(), re.cap(7).toInt()));
+    QDateTime dt(QDate::fromString(QString("%1 %2 %3 %4").arg(reMatch.captured(1), reMatch.captured(3), reMatch.captured(2), reMatch.captured(4)), Qt::TextDate),
+                 QTime(reMatch.captured(5).toInt(), reMatch.captured(6).toInt(), reMatch.captured(7).toInt()));
 
     if (dt.isValid()) {
         return dt;
     }
-    return QDateTime(QDate::fromString(QString("%1 %2 %3 %4").arg(capitaliseWord(re.cap(1)), capitaliseWord(re.cap(3)), re.cap(2), re.cap(4)), Qt::TextDate),
-                     QTime(re.cap(5).toInt(), re.cap(6).toInt(), re.cap(7).toInt()));
+    return QDateTime(QDate::fromString(QString("%1 %2 %3 %4").arg(capitaliseWord(reMatch.captured(1)), capitaliseWord(reMatch.captured(3)), reMatch.captured(2), reMatch.captured(4)), Qt::TextDate),
+                     QTime(reMatch.captured(5).toInt(), reMatch.captured(6).toInt(), reMatch.captured(7).toInt()));
 }
 
 static QUrl parseImage(QXmlStreamReader &reader)
@@ -110,7 +112,7 @@ static Episode parseEpisode(QXmlStreamReader &reader)
 
     while (!reader.atEnd()) {
         reader.readNext();
-        const QStringRef name = reader.name();
+        const QStringView name = reader.name();
         if (reader.isStartElement()) {
             if (QLatin1String("title")==name) {
                 ep.name=reader.readElementText().simplified();
@@ -180,7 +182,7 @@ Channel RssParser::parse(QIODevice *dev, bool getEpisodes, bool getDescription)
             reader.readNext();
 
             if (reader.isStartElement()) {
-                const QStringRef name = reader.name();
+                const QStringView name = reader.name();
                 if (ch.name.isEmpty() && QLatin1String("title")==name) {
                     ch.name=reader.readElementText().simplified();
                 } else if (QLatin1String("image")==name && ch.image.isEmpty()) {

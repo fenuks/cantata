@@ -439,9 +439,9 @@ PlayQueueModel::PlayQueueModel(QObject *parent)
     removeDuplicatesAction->setEnabled(false);
     QColor col=Utils::monoIconColor();
     undoAction=ActionCollection::get()->createAction("playqueue-undo", tr("Undo"), MonoIcon::icon(FontAwesome::undo, col));
-    undoAction->setShortcut(Qt::ControlModifier+Qt::Key_Z);
+    undoAction->setShortcut(Qt::ControlModifier|Qt::Key_Z);
     redoAction=ActionCollection::get()->createAction("playqueue-redo", tr("Redo"), MonoIcon::icon(FontAwesome::repeat, col));
-    redoAction->setShortcut(Qt::ControlModifier+Qt::ShiftModifier+Qt::Key_Z);
+    redoAction->setShortcut(Qt::ControlModifier|Qt::ShiftModifier|Qt::Key_Z);
     connect(undoAction, SIGNAL(triggered()), this, SLOT(undo()));
     connect(redoAction, SIGNAL(triggered()), this, SLOT(redo()));
     connect(removeDuplicatesAction, SIGNAL(triggered()), this, SLOT(removeDuplicates()));
@@ -601,13 +601,13 @@ QVariant PlayQueueModel::data(const QModelIndex &index, int role) const
         return songs.at(index.row()).id;
     case Cantata::Role_SongWithRating:
     case Cantata::Role_Song: {
-        QVariant var;
         const Song &s=songs.at(index.row());
         if (Cantata::Role_SongWithRating==role && Song::Standard==s.type && Song::Rating_Null==s.rating) {
             emit getRating(s.file);
             s.rating=Song::Rating_Requested;
         }
-        var.setValue<Song>(s);
+        QVariant var;
+        var.setValue(s);
         return var;
     }
     case Cantata::Role_AlbumDuration: {

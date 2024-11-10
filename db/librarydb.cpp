@@ -28,7 +28,7 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QFile>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QRandomGenerator>
 #include <QDebug>
 #include <algorithm>
@@ -413,7 +413,7 @@ public:
         } else {
             // Do integers inline - sqlite seems to get confused when you pass integers
             // to bound parameters
-            if (QVariant::Int==value.type()) {
+            if (QMetaType::Int==value.typeId()) {
                 whereClauses << QString("%1 %2 %3").arg(column, op, value.toString());
             } else if ("genre"==column) {
                 QString clause("(");
@@ -1173,7 +1173,7 @@ bool LibraryDb::setFilter(const QString &f, const QString &genre)
     QString newFilter=f.trimmed().toLower();
     QString year;
     if (!f.isEmpty()) {
-        QStringList strings(newFilter.split(QRegExp("\\s+")));
+        QStringList strings(newFilter.split(QRegularExpression("\\s+")));
         static QList<QLatin1Char> replaceChars=QList<QLatin1Char>() << QLatin1Char('(') << QLatin1Char(')') << QLatin1Char('"')
                                                                     << QLatin1Char(':') << QLatin1Char('-') << QLatin1Char('#');
         QStringList tokens;

@@ -44,7 +44,6 @@
 #include <QApplication>
 #include <QProgressBar>
 #include <QScrollArea>
-#include <QDesktopWidget>
 #include <QWheelEvent>
 #include <QScrollBar>
 #include <QMenu>
@@ -236,7 +235,7 @@ CoverPreview::CoverPreview(QWidget *p)
     layout->addWidget(loadingLabel);
     layout->addWidget(pbar);
     layout->addWidget(scrollArea);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     setMainWidget(mw);
 }
 
@@ -253,13 +252,13 @@ void CoverPreview::showImage(const QImage &img, const QString &u)
         QApplication::processEvents();
         adjustSize();
         QStyleOptionFrame opt;
-        opt.init(scrollArea);
+        opt.initFrom(scrollArea);
         int fw=style()->pixelMetric(QStyle::PM_DefaultFrameWidth, &opt, scrollArea);
         if (fw<0) {
             fw=2;
         }
         fw*=2;
-        QRect desktop = qApp->desktop()->screenGeometry(this);
+        QRect desktop = qApp->primaryScreen()->availableGeometry();
         int maxWidth=desktop.width()*0.75;
         int maxHeight=desktop.height()*0.75;
         int lrPad=width()-mainWidget()->width();
